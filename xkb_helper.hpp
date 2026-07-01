@@ -88,6 +88,14 @@ template<typename T>
 concept keymap_processable = requires (T t) {
     t.process_keymap(0,0);
 };
+template<typename T>
+concept pointer_motion_event_processable = requires (T t) {
+    t.process_pointer_motion_event(0,0);
+};
+template<typename T>
+concept pointer_button_event_processable = requires (T t) {
+    t.process_pointer_button_event(0,0);
+};
 
 template<typename T>
 class add_process_keymap : public T {
