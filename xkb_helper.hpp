@@ -12,7 +12,7 @@ template <typename T>
 class add_context : public T {
 public:
   using parent = T;
-  add_context(const configure auto& conf) : parent{conf} {
+  add_context(const configure auto& conf) : parent{conf}, context{} {
       context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
   }
   ~add_context() {
@@ -28,7 +28,7 @@ template<typename T>
 class add_keymap : public T {
 public:
     using parent = T;
-    add_keymap(const configure auto& conf) : parent{conf} {
+    add_keymap(const configure auto& conf) : parent{conf}, keymap{} {
     }
     ~add_keymap() {
         xkb_keymap_unref(keymap);
@@ -52,7 +52,7 @@ template<typename T>
 class add_state : public T {
 public:
     using parent = T;
-    add_state(const configure auto& conf) : parent{conf} {
+    add_state(const configure auto& conf) : parent{conf}, state{} {
     }
     ~add_state() {
         xkb_state_unref(state);
