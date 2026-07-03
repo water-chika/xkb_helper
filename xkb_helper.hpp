@@ -72,6 +72,10 @@ public:
         keysym = xkb_state_key_get_one_sym(state, keycode);
         return keysym;
     }
+    void set_keyboard_modifiers(uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group) {
+        std::cout << "set_keyboard_modifiers" << std::endl;
+        xkb_state_update_mask(state, mods_depressed, mods_latched, mods_locked, 0, 0, group);
+    }
 private:
     xkb_state* state;
 };
@@ -87,6 +91,10 @@ concept keysym_event_processable = requires (T t) {
 template<typename T>
 concept keymap_processable = requires (T t) {
     t.process_keymap(0,0);
+};
+template<typename T>
+concept keyboard_modifiers_event_processable = requires (T t) {
+    t.process_keyboard_modifiers(0,0,0,0);
 };
 template<typename T>
 concept pointer_motion_event_processable = requires (T t) {
@@ -108,6 +116,17 @@ public:
         char* keymap_string = reinterpret_cast<char*>(mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0));
         parent::use_keymap_string(keymap_string);
         munmap(keymap_string, size);
+    }
+};
+template<typename T>
+class add_process_keyboard_modifiers : public T {
+public:
+    using parent = T;
+    add_process_keyboard_modifiers(const configure auto& conf) : parent{conf} {
+    }
+
+    auto process_keyboard_modifiers(uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group) {
+        parent::set_keyboard_modifiers(mods_depressed, mods_latched, mods_locked, group);
     }
 };
 
