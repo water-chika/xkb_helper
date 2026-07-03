@@ -8,8 +8,50 @@ namespace xkb_helper {
 
 using cpp_helper::configure;
 
+template<typename T>
+concept key_event_processable = requires (T t) {
+    t.process_key_event(0,0);
+};
+template<typename T>
+concept keysym_event_processable = requires (T t) {
+    t.process_keysym_event(0,0);
+};
+template<typename T>
+concept keymap_processable = requires (T t) {
+    t.process_keymap(0,0);
+};
+template<typename T>
+concept keyboard_modifiers_event_processable = requires (T t) {
+    t.process_keyboard_modifiers(0,0,0,0);
+};
+template<typename T>
+concept pointer_motion_event_processable = requires (T t) {
+    t.process_pointer_motion_event(0,0);
+};
+template<typename T>
+concept pointer_button_event_processable = requires (T t) {
+    t.process_pointer_button_event(0,0);
+};
+
+template<typename T>
+concept xkb_required =
+    key_event_processable<T> ||
+    keysym_event_processable<T> ||
+    keymap_processable<T> ||
+    keyboard_modifiers_event_processable<T> ||
+    pointer_motion_event_processable<T> ||
+    pointer_button_event_processable<T>
+;
+
 template <typename T>
 class add_context : public T {
+public:
+  using parent = T;
+  add_context(const configure auto& conf) : parent{conf} {
+  }
+};
+template <xkb_required T>
+class add_context<T> : public T {
 public:
   using parent = T;
   add_context(const configure auto& conf) : parent{conf}, context{} {
@@ -26,6 +68,13 @@ private:
 
 template<typename T>
 class add_keymap : public T {
+public:
+    using parent = T;
+    add_keymap(const configure auto& conf) : parent{conf} {
+    }
+};
+template<xkb_required T>
+class add_keymap<T> : public T {
 public:
     using parent = T;
     add_keymap(const configure auto& conf) : parent{conf}, keymap{} {
@@ -50,6 +99,13 @@ private:
 
 template<typename T>
 class add_state : public T {
+public:
+    using parent = T;
+    add_state(const configure auto& conf) : parent{conf} {
+    }
+};
+template<xkb_required T>
+class add_state<T> : public T {
 public:
     using parent = T;
     add_state(const configure auto& conf) : parent{conf}, state{} {
@@ -80,33 +136,16 @@ private:
     xkb_state* state;
 };
 
-template<typename T>
-concept key_event_processable = requires (T t) {
-    t.process_key_event(0,0);
-};
-template<typename T>
-concept keysym_event_processable = requires (T t) {
-    t.process_keysym_event(0,0);
-};
-template<typename T>
-concept keymap_processable = requires (T t) {
-    t.process_keymap(0,0);
-};
-template<typename T>
-concept keyboard_modifiers_event_processable = requires (T t) {
-    t.process_keyboard_modifiers(0,0,0,0);
-};
-template<typename T>
-concept pointer_motion_event_processable = requires (T t) {
-    t.process_pointer_motion_event(0,0);
-};
-template<typename T>
-concept pointer_button_event_processable = requires (T t) {
-    t.process_pointer_button_event(0,0);
-};
 
 template<typename T>
 class add_process_keymap : public T {
+public:
+    using parent = T;
+    add_process_keymap(const configure auto& conf) : parent{conf} {
+    }
+};
+template<xkb_required T>
+class add_process_keymap<T> : public T {
 public:
     using parent = T;
     add_process_keymap(const configure auto& conf) : parent{conf} {
@@ -120,6 +159,13 @@ public:
 };
 template<typename T>
 class add_process_keyboard_modifiers : public T {
+public:
+    using parent = T;
+    add_process_keyboard_modifiers(const configure auto& conf) : parent{conf} {
+    }
+};
+template<xkb_required T>
+class add_process_keyboard_modifiers<T> : public T {
 public:
     using parent = T;
     add_process_keyboard_modifiers(const configure auto& conf) : parent{conf} {
