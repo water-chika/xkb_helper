@@ -160,6 +160,7 @@ public:
         char* keymap_string = reinterpret_cast<char*>(mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0));
         parent::use_keymap_string(keymap_string);
         munmap(keymap_string, size);
+        close(fd);
     }
 };
 template<typename T>
