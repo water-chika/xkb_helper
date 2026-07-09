@@ -32,6 +32,10 @@ template<typename T>
 concept pointer_button_event_processable = requires (T t) {
     t.process_pointer_button_event(0,0);
 };
+template<typename T>
+concept pointer_axis_event_processable = requires (T t) {
+    t.process_pointer_axis_event(0,0);
+};
 
 template<typename T>
 concept xkb_required =
@@ -40,7 +44,8 @@ concept xkb_required =
     keymap_processable<T> ||
     keyboard_modifiers_event_processable<T> ||
     pointer_motion_event_processable<T> ||
-    pointer_button_event_processable<T>
+    pointer_button_event_processable<T> ||
+    pointer_axis_event_processable<T>
 ;
 
 template <typename T>
