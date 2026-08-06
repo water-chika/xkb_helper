@@ -13,6 +13,10 @@ concept key_event_processable = requires (T t) {
     t.process_key_event(0,0);
 };
 template<typename T>
+concept keyboard_leave_event_processable = requires (T t) {
+    t.process_keyboard_leave_event();
+};
+template<typename T>
 concept keysym_event_processable = requires (T t) {
     t.process_keysym_event(0,0);
 };
